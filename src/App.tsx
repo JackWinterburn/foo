@@ -1,24 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Board from './components/Board';
+
+import ControlBar from './components/ControlBar';
+import { useAtom } from "jotai";
+import { startNodeCoords, targetNodeCoords }
+from "./atoms";
 
 function App() {
+  const [startNode, setStartNode] = useAtom(startNodeCoords)
+  const [targetNode, setTargetNode] = useAtom(targetNodeCoords)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ControlBar/>
+      <Board startNode={startNode} targetNode={targetNode} />
     </div>
   );
 }
