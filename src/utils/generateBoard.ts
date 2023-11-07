@@ -16,6 +16,8 @@ export default function generateGrid(rows: number, cols: number, startNode: { x:
           start: false,
           target: false,
           weight: 1,
+          parent: null,
+          shortestPath: false,
         };
   
         // Set start node and target node properties

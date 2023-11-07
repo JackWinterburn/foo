@@ -1,10 +1,11 @@
 import React from 'react';
 import { Select, Button, Flex, Spacer } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
-import { selectedAlgorithmAtom } from '../atoms'; // Create this atom in a separate file
+import { selectedAlgorithmAtom, algorithmInExecution } from '../atoms'; // Create this atom in a separate file
 
 const ControlBar: React.FC = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useAtom(selectedAlgorithmAtom);
+  const [algorithmIsExecuting, setAlgorithmIsExecuting] = useAtom(algorithmInExecution);
 
   const handleAlgorithmChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAlgorithm(event.target.value);
@@ -19,7 +20,7 @@ const ControlBar: React.FC = () => {
   };
 
   const handleStartVisualization = () => {
-    // Add logic for starting the visualization here
+    setAlgorithmIsExecuting(true);
   };
 
   return (
@@ -33,7 +34,7 @@ const ControlBar: React.FC = () => {
       <Spacer />
       <Button colorScheme="blue" onClick={handleGenerateMaze}>Generate Maze</Button>
       <Button colorScheme="red" onClick={handleClearBoard}>Clear Board</Button>
-      <Button colorScheme="green" onClick={handleStartVisualization}>Start Visualization</Button>
+      <Button colorScheme="green" onClick={handleStartVisualization} isLoading={algorithmIsExecuting}>Start Visualization</Button>
     </Flex>
   );
 };

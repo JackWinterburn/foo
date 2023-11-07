@@ -8,6 +8,8 @@ export type Node = {
     start?: boolean,
     target?: boolean,
     weight: number,
+    parent: Node | null,
+    shortestPath: boolean
 }
 
 export type Coords = {
