@@ -1,3 +1,7 @@
+.node {
+  border: 0.5px solid rgba(0, 0, 0, 0.152);
+}
+
 .shortest-path{
     /*border: 1px solid rgb(175, 216, 248);*/
     background-color: rgb(255, 254, 106);
@@ -5,7 +9,7 @@
     background-repeat: no-repeat;
     background-size: contain;*/
     animation-name: triangletwo;
-    animation-duration: 1.5s;
+    animation-duration: 5s;
     animation-timing-function: linear;
     animation-delay: 0;
     animation-direction: alternate;
@@ -20,14 +24,20 @@
     background-repeat: no-repeat;
     background-size: contain;
     animation-name: visitedAnimation;
-    animation-duration: 1.5s;
+    animation-duration: 0.3s;
     animation-timing-function: ease-out;
-    animation-delay: 0;
+    /* animation-delay: 0; */
     animation-direction: alternate;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     animation-play-state: running;
   }
+
+  .current{
+    border: 1px solid rgb(175, 216, 248);
+    background-color: rgb(255, 254, 106)
+  }
+
   @keyframes triangletwo {
     0% {
       transform: scale(.6);

@@ -1,14 +1,13 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Tooltip } from '@chakra-ui/react';
 import { Node } from '../types';
 import { useState } from 'react';
 import { algorithmInExecution } from '../atoms';
 import { useAtom } from 'jotai';
 
 import "../styling/cellAnimations.css"
-function NodeEl({x, y, visited, f, h, g, start, target, weight, shortestPath, parent}: Node) {
+function NodeEl({ x, y, visited, f, h, g, start, target, weight, shortestPath, parent, current }: Node, delay: number) {
   const [algorithmIsExecuting, setAlgorithmIsExecuting] = useAtom(algorithmInExecution);
-
-  let nodeColor;  
+  let nodeColor;
   let classname = ""
 
   if (start) {
@@ -26,30 +25,41 @@ function NodeEl({x, y, visited, f, h, g, start, target, weight, shortestPath, pa
     nodeColor = 'blue.300';
     classname = "visited";
 
-  } else {
+  }
+  else if (current) {
+    nodeColor = 'yellow.300';
+    classname = "current";
+  }
+  else {
     nodeColor = 'white';
     classname = "unvisited";
 
   }
 
-  const handleClick = () => {console.log(shortestPath, visited, parent)}
+  const handleClick = () => { console.log(shortestPath, visited, parent); }
+  return (
+    <Tooltip label={`x: ${x}, y: ${y}`}>
 
-return (
-  <Box
-    className={classname}
-    cursor={`${algorithmIsExecuting? "not-allowed": "auto"}`}
-    w="41px"
-    h="41px"
-    border="1px solid #ccc"
-    bg={nodeColor}
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    fontSize="12px"
-    onClick={handleClick}
-  >
-  </Box>
-);
+      <Box
+        cursor={`${algorithmIsExecuting ? "not-allowed" : "auto"}`}
+        w="25px"
+        h="25px"
+        bg={nodeColor}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        fontSize="12px"
+        onClick={handleClick}
+      >
+        <div
+          className={`${classname} node`}
+          style={{ animationDelay: `${delay}ms` }}
+        >
+
+        </div>
+      </Box>
+    </Tooltip>
+  );
 }
 
 export default NodeEl
