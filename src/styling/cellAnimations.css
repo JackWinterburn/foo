@@ -1,78 +1,101 @@
 .node {
-  border: 0.5px solid rgba(0, 0, 0, 0.152);
+  border-top: 0.5px solid rgba(0, 0, 0, 0.152);
+  border-right: 0.5px solid rgba(0, 0, 0, 0.152);
 }
 
-.shortest-path{
-    /*border: 1px solid rgb(175, 216, 248);*/
-    background-color: rgb(255, 254, 106);
-    /*background-position: center;
+.shortest-path {
+  /*border: 1px solid rgb(175, 216, 248);*/
+  background-color: rgb(255, 254, 106);
+  /*background-position: center;
     background-repeat: no-repeat;
     background-size: contain;*/
-    animation-name: triangletwo;
-    animation-duration: 5s;
-    animation-timing-function: linear;
-    animation-delay: 0;
-    animation-direction: alternate;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    animation-play-state: running;
+  animation-name: triangletwo;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+.visited {
+  border: 1px solid rgb(175, 216, 248);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* animation-name: visitedAnimation; */
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+  /* animation-delay: 0; */
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+.current {
+  border: 1px solid rgb(175, 216, 248);
+  background-color: rgb(255, 254, 106);
+}
+
+@keyframes triangletwo {
+  0% {
+    transform: scale(0.6);
+    background-color: rgb(255, 254, 106);
   }
 
-  .visited{
-    border: 1px solid rgb(175, 216, 248);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    animation-name: visitedAnimation;
-    animation-duration: 0.3s;
-    animation-timing-function: ease-out;
-    /* animation-delay: 0; */
-    animation-direction: alternate;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    animation-play-state: running;
+  50% {
+    transform: scale(1.2);
+    background-color: rgb(255, 254, 106);
   }
 
-  .current{
-    border: 1px solid rgb(175, 216, 248);
-    background-color: rgb(255, 254, 106)
+  100% {
+    transform: scale(1);
+    background-color: rgb(255, 254, 106);
+  }
+}
+
+@keyframes visitedAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(0, 0, 66, 0.75);
+    border-radius: 100%;
   }
 
-  @keyframes triangletwo {
-    0% {
-      transform: scale(.6);
-      background-color: rgb(255, 254, 106);
-    }
-  
-    50% {
-      transform: scale(1.2);
-      background-color: rgb(255, 254, 106);
-    }
-  
-    100% {
-      transform: scale(1.0);
-      background-color: rgb(255, 254, 106);
-    }
+  50% {
+    background-color: rgba(17, 104, 217, 0.75);
   }
 
-  @keyframes visitedAnimation {
-    0% {
-      transform: scale(.3);
-      background-color: rgba(0, 0, 66, 0.75);
-      border-radius: 100%;
-    }
-  
-    50% {
-      background-color: rgba(17, 104, 217, 0.75);
-    }
-  
-    75% {
-      transform: scale(1.2);
-      background-color: rgba(0, 217, 159, 0.75)
-    }
-  
-    100% {
-      transform: scale(1.0);
-      background-color: rgba(0, 190, 218, 0.75);
-    }
+  75% {
+    transform: scale(1.2);
+    background-color: rgba(0, 217, 159, 0.75);
   }
+
+  100% {
+    transform: scale(1);
+    background-color: rgba(0, 190, 218, 0.75);
+  }
+}
+
+@keyframes shortestPathAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(66, 65, 0, 0.75);
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: rgb(238, 255, 0);
+  }
+
+  75% {
+    transform: scale(1.2);
+    background-color: rgb(255, 251, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgb(238, 255, 0);
+  }
+}

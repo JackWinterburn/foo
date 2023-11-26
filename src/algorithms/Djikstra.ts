@@ -1,13 +1,16 @@
 import { Node } from "../types";
 
-export function Dijkstra(
-  { grid, startNode, targetNode }: {
-    grid: Node[][];
-    startNode: Node;
-    targetNode: Node;
-  },
-) {
+export function Dijkstra({
+  grid,
+  startNode,
+  targetNode,
+}: {
+  grid: Node[][];
+  startNode: Node;
+  targetNode: Node;
+}) {
   const visitedNodesInOrder: Node[] = [];
+  const shortestPathNodes: Node[] = [];
 
   const nodesToVisit: Node[] = [];
   nodesToVisit.push(startNode);
@@ -54,7 +57,6 @@ export function Dijkstra(
   }
 
   let currentNode = grid[targetNode.y][targetNode.x];
-  const shortestPathNodes: Node[] = [];
 
   while (currentNode.parent) {
     shortestPathNodes.push(currentNode);
@@ -78,7 +80,7 @@ const getNeighbors = (node: Node, grid: Node[][]): Node[] => {
 
 const calculateHeuristic = (
   node: Node,
-  targetNode: { x: number; y: number },
+  targetNode: { x: number; y: number }
 ): number => {
   return Math.abs(node.x - targetNode.x) + Math.abs(node.y - targetNode.y);
 };
