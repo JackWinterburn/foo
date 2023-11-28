@@ -11,6 +11,7 @@ export const algorithmInExecution = atom<boolean>(false);
 export const selectedAlgorithmAtom = atom<string>("astar");
 export const startNodeCoords = atom<Coords>(defaultStartingNodeCoords);
 export const targetNodeCoords = atom<Coords>(defaultTargetNodeCoords);
+export const wallNodeCoords = atom<Coords[]>([]);
 export const boardHeight = atom<number>(defaultBoardHeight);
 export const currNode = atom<Coords>(defaultStartingNodeCoords);
 export const boardWidth = atom<number>(defaultBoardWidth);
@@ -21,5 +22,6 @@ export const BoardState = atom<Node[][]>(
     defaultBoardWidth,
     defaultStartingNodeCoords,
     defaultTargetNodeCoords,
-  ),
+    []
+  )
 );

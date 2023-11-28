@@ -5,7 +5,6 @@ import { useAtom } from "jotai";
 import { BoardState, algorithmInExecution } from "../atoms";
 import NodeEl from "./NodeEl";
 import { Dijkstra } from "../algorithms/Djikstra";
-import { time } from "console";
 
 const Board = ({
   startNode,
@@ -60,7 +59,7 @@ const Board = ({
             });
             return newGrid;
           });
-        }, visitedCells.length * 33);
+        }, visitedNodesInOrder.length * 33);
         setAlgorithmIsExecuting(false);
         return;
       }
@@ -75,6 +74,26 @@ const Board = ({
     }
   };
 
+  const handleNodeClick = (x: number, y: number) => {
+    setBoardState((prevGrid) => {
+      const newGrid = prevGrid.map((row) => [...row]);
+      const clickedNode = newGrid[y][x];
+
+      // Check if the clicked node is not the start or target node
+      if (!clickedNode.start && !clickedNode.target) {
+        // Update the weight to infinity to make it a wall node
+        const newNode = {
+          ...clickedNode,
+          weight: Infinity,
+          visited: false, // Ensure visited status is reset for walls
+        };
+        newGrid[y][x] = newNode;
+      }
+
+      return newGrid;
+    });
+  };
+
   return (
     <>
       <Box
@@ -85,6 +104,7 @@ const Board = ({
           <Box key={rowIndex} style={{ display: "flex" }}>
             {row.map((node) => (
               <NodeEl
+                onClick={() => handleNodeClick(node.x, node.y)}
                 key={`${node.x}-${node.y}`}
                 x={node.x}
                 y={node.y}

@@ -1,7 +1,7 @@
 import { Box, Tooltip } from "@chakra-ui/react";
-import { Node } from "../types";
-import { useState } from "react";
-import { algorithmInExecution } from "../atoms";
+import { Node, nodeTypeOptions } from "../types";
+import { useState, useEffect } from "react";
+import { BoardState, algorithmInExecution } from "../atoms";
 import { useAtom } from "jotai";
 
 import "../styling/cellAnimations.css";
@@ -20,7 +20,12 @@ function NodeEl({
   parent,
   current,
   delay,
-}: Node) {
+  onClick,
+}: Node & { onClick: () => void }) {
+  const [boardState, setBoardState] = useAtom(BoardState);
+
+  useEffect(() => {}, [boardState]);
+
   const visitedStyle = {
     // border: "1px solid rgb(175, 216, 248)",
     backgroundPosition: "center",
@@ -50,6 +55,19 @@ function NodeEl({
     animationFillMode: "forwards",
     animationPlayState: "running",
   };
+  const wallStyle = {
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "contain",
+    animationName: "wallAnimation",
+    animationDuration: "0.3s",
+    animationTimingFunction: "ease-out",
+    animationDelay: `${delay}ms`,
+    animationDirection: "alternate",
+    animationIterationCount: 1,
+    animationFillMode: "forwards",
+    animationPlayState: "running",
+  };
 
   const [algorithmIsExecuting, setAlgorithmIsExecuting] =
     useAtom(algorithmInExecution);
@@ -63,6 +81,9 @@ function NodeEl({
   } else if (target) {
     nodeColor = "red.300";
     classname = "target";
+  } else if (weight === Infinity) {
+    nodeStyle = wallStyle;
+    classname = "wall";
   } else if (shortestPath) {
     // nodeColor = 'yellow.300';
     nodeStyle = shortestPathStyle;
@@ -80,9 +101,12 @@ function NodeEl({
   }
 
   const handleClick = () => {
-    console.log(shortestPath, visited, parent);
+    console.log(weight === Infinity);
+    if (!algorithmIsExecuting) {
+      // Only allow changing nodes if the algorithm is not executing
+      onClick();
+    }
   };
-
   return (
     <Tooltip label={`x: ${x}, y: ${y}`}>
       <div>

@@ -18,3 +18,5 @@ export type Coords = {
   x: number;
   y: number;
 };
+
+export type nodeTypeOptions = "start" | "target" | "empty" | "wall";

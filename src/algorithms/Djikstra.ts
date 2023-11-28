@@ -21,13 +21,11 @@ export function Dijkstra({
     nodesToVisit.sort((a, b) => a.f - b.f);
     const currentNode = nodesToVisit.shift();
 
-    // type guard to avoid undef error
     if (!currentNode) {
       continue;
     }
 
     if (currentNode.x === targetNode.x && currentNode.y === targetNode.y) {
-      // Found targetNode node
       break;
     }
 
@@ -40,11 +38,9 @@ export function Dijkstra({
       }
 
       const newG = currentNode.g + 1;
-      const newF = newG + calculateHeuristic(neighbor, targetNode);
 
-      if (newF <= neighbor.f || !(neighborKey in nodesToVisit)) {
+      if (newG <= neighbor.g || !(neighborKey in nodesToVisit)) {
         neighbor.g = newG;
-        neighbor.f = newF;
         neighbor.parent = currentNode;
 
         visitedNodes[neighborKey] = true;
@@ -70,17 +66,29 @@ const getNeighbors = (node: Node, grid: Node[][]): Node[] => {
   const neighbors: Node[] = [];
   const { x, y } = node;
 
-  if (x > 0) neighbors.push(grid[y][x - 1]);
-  if (x < grid[0].length - 1) neighbors.push(grid[y][x + 1]);
-  if (y > 0) neighbors.push(grid[y - 1][x]);
-  if (y < grid.length - 1) neighbors.push(grid[y + 1][x]);
+  // Define a helper function to check if a node is a valid neighbor
+  const isValidNeighbor = (neighborX: number, neighborY: number): boolean => {
+    return (
+      neighborX >= 0 &&
+      neighborX < grid[0].length &&
+      neighborY >= 0 &&
+      neighborY < grid.length &&
+      !grid[neighborY][neighborX].visited &&
+      grid[neighborY][neighborX].weight !== Infinity
+    );
+  };
 
-  return neighbors.filter((neighbor) => !neighbor.visited);
-};
+  // Check left neighbor
+  if (isValidNeighbor(x - 1, y)) neighbors.push(grid[y][x - 1]);
 
-const calculateHeuristic = (
-  node: Node,
-  targetNode: { x: number; y: number }
-): number => {
-  return Math.abs(node.x - targetNode.x) + Math.abs(node.y - targetNode.y);
+  // Check right neighbor
+  if (isValidNeighbor(x + 1, y)) neighbors.push(grid[y][x + 1]);
+
+  // Check top neighbor
+  if (isValidNeighbor(x, y - 1)) neighbors.push(grid[y - 1][x]);
+
+  // Check bottom neighbor
+  if (isValidNeighbor(x, y + 1)) neighbors.push(grid[y + 1][x]);
+
+  return neighbors;
 };
