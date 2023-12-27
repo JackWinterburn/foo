@@ -8,7 +8,7 @@ const defaultBoardHeight = 20;
 const defaultBoardWidth = 40;
 
 export const algorithmInExecution = atom<boolean>(false);
-export const selectedAlgorithmAtom = atom<string>("astar");
+export const selectedAlgorithmAtom = atom<string>("dijkstra");
 export const startNodeCoords = atom<Coords>(defaultStartingNodeCoords);
 export const targetNodeCoords = atom<Coords>(defaultTargetNodeCoords);
 export const wallNodeCoords = atom<Coords[]>([]);

@@ -59,8 +59,8 @@ const Board = ({
             });
             return newGrid;
           });
+          setAlgorithmIsExecuting(false);
         }, visitedNodesInOrder.length * 33);
-        setAlgorithmIsExecuting(false);
         return;
       }
 
