@@ -5,7 +5,7 @@ import generateGrid from "./utils/generateBoard";
 const defaultStartingNodeCoords = { x: 3, y: 9 };
 const defaultTargetNodeCoords = { x: 26, y: 4 };
 const defaultBoardHeight = 20;
-const defaultBoardWidth = 40;
+const defaultBoardWidth = 30;
 
 export const algorithmInExecution = atom<boolean>(false);
 export const selectedAlgorithmAtom = atom<string>("dijkstra");

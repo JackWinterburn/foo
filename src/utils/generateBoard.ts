@@ -33,7 +33,9 @@ export default function generateGrid(
         node.target = true;
       } else {
         wallNodes.forEach((coord) => {
-          if (j === coord.x && i === coord.y) node.weight = Infinity; //node is a wall
+          if (j === coord.x && i === coord.y)
+            node.weight = Infinity; //node is a wall
+          else node.weight = 0;
         });
       }
       row.push(node);

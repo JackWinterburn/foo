@@ -1,6 +1,6 @@
 import { Node } from "../types";
 
-export function Dijkstra(grid: Node[][], startNode: Node, targetNode: Node) {
+export function AStar(grid: Node[][], startNode: Node, targetNode: Node) {
   const visitedNodesInOrder: Node[] = [];
   const shortestPathNodes: Node[] = [];
 
@@ -30,9 +30,11 @@ export function Dijkstra(grid: Node[][], startNode: Node, targetNode: Node) {
       }
 
       const newG = currentNode.g + 1;
+      const newF = newG + calculateHeuristic(neighbor, targetNode);
 
-      if (newG <= neighbor.g || !(neighborKey in nodesToVisit)) {
+      if (newF <= neighbor.f || !(neighborKey in nodesToVisit)) {
         neighbor.g = newG;
+        neighbor.f = newF;
         neighbor.parent = currentNode;
 
         visitedNodes[neighborKey] = true;
@@ -58,7 +60,6 @@ const getNeighbors = (node: Node, grid: Node[][]): Node[] => {
   const neighbors: Node[] = [];
   const { x, y } = node;
 
-  // Define a helper function to check if a node is a valid neighbor
   const isValidNeighbor = (neighborX: number, neighborY: number): boolean => {
     return (
       neighborX >= 0 &&
@@ -70,17 +71,18 @@ const getNeighbors = (node: Node, grid: Node[][]): Node[] => {
     );
   };
 
-  // Check left neighbor
   if (isValidNeighbor(x - 1, y)) neighbors.push(grid[y][x - 1]);
-
-  // Check right neighbor
   if (isValidNeighbor(x + 1, y)) neighbors.push(grid[y][x + 1]);
-
-  // Check top neighbor
   if (isValidNeighbor(x, y - 1)) neighbors.push(grid[y - 1][x]);
-
-  // Check bottom neighbor
   if (isValidNeighbor(x, y + 1)) neighbors.push(grid[y + 1][x]);
 
   return neighbors;
+};
+
+const calculateHeuristic = (
+  node: Node,
+  targetNode: { x: number; y: number }
+): number => {
+  // Manhattan heuristic
+  return Math.abs(node.x - targetNode.x) + Math.abs(node.y - targetNode.y);
 };

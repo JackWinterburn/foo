@@ -1,6 +1,10 @@
 import { Node } from "../types";
 
-export function Dijkstra(grid: Node[][], startNode: Node, targetNode: Node) {
+export function BreadthFirstSearch(
+  grid: Node[][],
+  startNode: Node,
+  targetNode: Node
+) {
   const visitedNodesInOrder: Node[] = [];
   const shortestPathNodes: Node[] = [];
 
@@ -10,7 +14,6 @@ export function Dijkstra(grid: Node[][], startNode: Node, targetNode: Node) {
   const visitedNodes: { [key: string]: boolean } = {};
 
   while (nodesToVisit.length > 0) {
-    nodesToVisit.sort((a, b) => a.f - b.f);
     const currentNode = nodesToVisit.shift();
 
     if (!currentNode) {
@@ -29,18 +32,13 @@ export function Dijkstra(grid: Node[][], startNode: Node, targetNode: Node) {
         continue;
       }
 
-      const newG = currentNode.g + 1;
+      neighbor.parent = currentNode;
 
-      if (newG <= neighbor.g || !(neighborKey in nodesToVisit)) {
-        neighbor.g = newG;
-        neighbor.parent = currentNode;
+      visitedNodes[neighborKey] = true;
 
-        visitedNodes[neighborKey] = true;
+      nodesToVisit.push(neighbor);
 
-        nodesToVisit.push(neighbor);
-
-        visitedNodesInOrder.push(neighbor);
-      }
+      visitedNodesInOrder.push(neighbor);
     }
   }
 

@@ -1,77 +1,96 @@
 import { useEffect, useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
-import { Node } from "../types";
+import { Node, node } from "../types";
 import { useAtom } from "jotai";
 import { BoardState, algorithmInExecution } from "../atoms";
 import NodeEl from "./NodeEl";
 import { Dijkstra } from "../algorithms/Djikstra";
+import { AStar } from "../algorithms/Astar";
+import { GreedyBestFirstSearch } from "../algorithms/Greedy";
+import { DepthFirstSearch } from "../algorithms/Dfs";
+import { BreadthFirstSearch } from "../algorithms/Bfs";
+import { BiDirectionalSwarm } from "../algorithms/BiDirectionalSwarm";
 
-const Board = ({
-  startNode,
-  targetNode,
-}: {
-  startNode: Node;
-  targetNode: Node;
-}) => {
+import { startNodeCoords, targetNodeCoords } from "../atoms";
+
+const Board = () => {
+  const [startCoords] = useAtom(startNodeCoords);
+  const [targetCoords] = useAtom(targetNodeCoords);
+
+  const [startNode] = useState<Node>({
+    ...node,
+    x: startCoords.x,
+    y: startCoords.y,
+    start: true,
+  });
+  const [targetNode] = useState<Node>({
+    ...node,
+    x: targetCoords.x,
+    y: targetCoords.y,
+    target: true,
+  });
+
   const [algorithmIsExecuting, setAlgorithmIsExecuting] =
     useAtom(algorithmInExecution);
   const [boardState, setBoardState] = useAtom(BoardState);
   const [visitedCells, setVisitedCells] = useState<Node[]>([]);
   const [shortestPathCells, setShortestPathCells] = useState<Node[]>([]);
-  let grid = boardState;
+
   useEffect(() => {
     if (algorithmIsExecuting) {
-      let visitedNodesInOrder: Node[] = [];
+      let bs = boardState;
+      let visitedNodes: Node[] = [];
       let shortestPathNodes: Node[] = [];
-      const dijkstraAlgorithm = async () => {
-        [visitedNodesInOrder, shortestPathNodes] = await Dijkstra({
-          grid,
+      console.log(bs[9][4]);
+      const dijkstraAlgorithm = () => {
+        [visitedNodes, shortestPathNodes] = GreedyBestFirstSearch(
+          bs,
           startNode,
-          targetNode,
-        });
+          targetNode
+        );
+        console.log(visitedNodes);
+        console.log(shortestPathNodes);
         setShortestPathCells(shortestPathNodes);
-        setVisitedCells(visitedNodesInOrder);
+        setVisitedCells(visitedNodes);
         animateAlgorithm(visitedCells, shortestPathCells);
       };
       dijkstraAlgorithm();
+      setAlgorithmIsExecuting(false);
     }
-  }, [startNode, targetNode, algorithmIsExecuting]);
+  }, [algorithmIsExecuting]);
+
+  useEffect(() => {
+    console.log("board state has changed");
+  }, [boardState]);
 
   const animateAlgorithm = (
-    visitedNodesInOrder: Node[],
+    visitedNodes: Node[],
     shortestPathNodes: Node[]
   ) => {
-    let grid = boardState;
-    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-      if (i === visitedNodesInOrder.length) {
-        setBoardState(grid);
-        let arr = shortestPathNodes.reverse();
-        setTimeout(() => {
-          setBoardState((prevGrid) => {
-            const newGrid = prevGrid.map((row) => [...row]);
-            arr.forEach((node, j) => {
-              const newNode = {
-                ...node,
-                shortestPath: true,
-                delay: 30 * j,
-              };
-              newGrid[node.y][node.x] = newNode;
-            });
-            return newGrid;
-          });
-          setAlgorithmIsExecuting(false);
-        }, visitedNodesInOrder.length * 33);
-        return;
-      }
+    const animateStep = (nodes: Node[], delayMultiplier: number) => {
+      setTimeout(() => {
+        setBoardState((prevGrid) => {
+          const newGrid = prevGrid.map((row) =>
+            row.map((node) => ({ ...node }))
+          );
 
-      const node = visitedNodesInOrder[i];
-      const newNode = {
-        ...node,
-        visited: true,
-        delay: 30 * i,
-      };
-      grid[node.y][node.x] = newNode;
-    }
+          nodes.forEach((node, i) => {
+            const newNode = {
+              ...node,
+              visited: nodes === visitedNodes,
+              shortestPath: nodes === shortestPathNodes,
+              delay: 30 * i,
+            };
+            newGrid[node.y][node.x] = newNode;
+          });
+
+          return newGrid;
+        });
+      }, delayMultiplier * 33);
+    };
+
+    animateStep(visitedNodes, 0);
+    animateStep(shortestPathNodes.reverse(), visitedNodes.length);
   };
 
   const handleNodeClick = (x: number, y: number) => {

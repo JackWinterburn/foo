@@ -14,6 +14,20 @@ export type Node = {
   delay?: number;
 };
 
+export const node: Node = {
+  x: 0,
+  y: 0,
+  h: 0,
+  f: 0,
+  g: 0,
+  visited: false,
+  start: false,
+  target: false,
+  weight: 1,
+  parent: null,
+  shortestPath: false,
+};
+
 export type Coords = {
   x: number;
   y: number;

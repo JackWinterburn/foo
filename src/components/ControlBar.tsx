@@ -10,7 +10,7 @@ import {
   boardHeight,
   boardWidth,
   wallNodeCoords,
-} from "../atoms"; // Create this atom in a separate file
+} from "../atoms";
 import generateGrid from "../utils/generateBoard";
 
 const ControlBar: React.FC = () => {
@@ -19,11 +19,11 @@ const ControlBar: React.FC = () => {
   );
   const [algorithmIsExecuting, setAlgorithmIsExecuting] =
     useAtom(algorithmInExecution);
-  const [boardState, setBoardState] = useAtom(BoardState);
-  const [startingNodeCoords, setStartingNodeCoords] = useAtom(startNodeCoords);
-  const [endNodeCoords, setEndNodeCoords] = useAtom(targetNodeCoords);
-  const [boardH, setBoardH] = useAtom(boardHeight);
-  const [boardW, setBoardW] = useAtom(boardWidth);
+  const [_, setBoardState] = useAtom(BoardState);
+  const [startingNodeCoords] = useAtom(startNodeCoords);
+  const [endNodeCoords] = useAtom(targetNodeCoords);
+  const [boardH] = useAtom(boardHeight);
+  const [boardW] = useAtom(boardWidth);
 
   const handleAlgorithmChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -41,7 +41,7 @@ const ControlBar: React.FC = () => {
       boardW,
       startingNodeCoords,
       endNodeCoords,
-      []
+      [] //fix wall coords here
     );
     setBoardState(newState);
   };
@@ -68,7 +68,7 @@ const ControlBar: React.FC = () => {
       </Button>
       <Button
         colorScheme="red"
-        onClick={handleClearBoard}
+        onClick={() => handleClearBoard()}
         isLoading={algorithmIsExecuting}
       >
         Clear Board
