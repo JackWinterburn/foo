@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { Coords, Node } from "./types";
+import { Coords, Node, AlgorithmObject } from "./types";
 import generateGrid from "./utils/generateBoard";
 
 const defaultStartingNodeCoords = { x: 3, y: 9 };
@@ -8,7 +8,11 @@ const defaultBoardHeight = 20;
 const defaultBoardWidth = 30;
 
 export const algorithmInExecution = atom<boolean>(false);
-export const selectedAlgorithmAtom = atom<string>("dijkstra");
+export const selectedAlgorithmAtom = atom<AlgorithmObject>({
+  name: "Dijkstra",
+  symbol: "Dijkstra",
+  description: "description"
+});
 export const startNodeCoords = atom<Coords>(defaultStartingNodeCoords);
 export const targetNodeCoords = atom<Coords>(defaultTargetNodeCoords);
 export const wallNodeCoords = atom<Coords[]>([]);

@@ -34,3 +34,9 @@ export type Coords = {
 };
 
 export type nodeTypeOptions = "start" | "target" | "empty" | "wall";
+
+export type AlgorithmObject = {
+  name: string;
+  symbol: string;
+  description: string;
+}

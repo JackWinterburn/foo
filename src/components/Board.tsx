@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { Node, node } from "../types";
 import { useAtom } from "jotai";
-import { BoardState, algorithmInExecution } from "../atoms";
+import generateGrid from "../utils/generateBoard";
+import { BoardState, algorithmInExecution, selectedAlgorithmAtom } from "../atoms";
 import NodeEl from "./NodeEl";
+import { startNodeCoords, targetNodeCoords, wallNodeCoords, boardHeight, boardWidth } from "../atoms";
 import { Dijkstra } from "../algorithms/Djikstra";
 import { AStar } from "../algorithms/Astar";
 import { GreedyBestFirstSearch } from "../algorithms/Greedy";
@@ -11,11 +13,13 @@ import { DepthFirstSearch } from "../algorithms/Dfs";
 import { BreadthFirstSearch } from "../algorithms/Bfs";
 import { BiDirectionalSwarm } from "../algorithms/BiDirectionalSwarm";
 
-import { startNodeCoords, targetNodeCoords } from "../atoms";
-
 const Board = () => {
   const [startCoords] = useAtom(startNodeCoords);
   const [targetCoords] = useAtom(targetNodeCoords);
+  const [selectedAlgorithm] = useAtom(selectedAlgorithmAtom);
+  const [wallNodes, setWallNodeCoords] = useAtom(wallNodeCoords);
+  const [boardW] = useAtom(boardWidth);
+  const [boardH] = useAtom(boardHeight);
 
   const [startNode] = useState<Node>({
     ...node,
@@ -35,7 +39,33 @@ const Board = () => {
   const [boardState, setBoardState] = useAtom(BoardState);
   const [visitedCells, setVisitedCells] = useState<Node[]>([]);
   const [shortestPathCells, setShortestPathCells] = useState<Node[]>([]);
+  const algs = [
+    {
+      function: Dijkstra,
+      symbol: "Dijkstra",
+    },
+    {
+      function: AStar,
+      symbol: "Astar",
+    },
+    {
+      function: GreedyBestFirstSearch,
+      symbol: "GBFS",
+    },
 
+    {
+      function: BiDirectionalSwarm,
+      symbol: "BS",
+    },
+    {
+      function: DepthFirstSearch,
+      symbol: "DFS",
+    },
+    {
+      function: BreadthFirstSearch,
+      symbol: "BFS",
+    }
+  ];
   useEffect(() => {
     if (algorithmIsExecuting) {
       let bs = boardState;
@@ -43,16 +73,20 @@ const Board = () => {
       let shortestPathNodes: Node[] = [];
       console.log(bs[9][4]);
       const dijkstraAlgorithm = () => {
-        [visitedNodes, shortestPathNodes] = GreedyBestFirstSearch(
-          bs,
-          startNode,
-          targetNode
-        );
-        console.log(visitedNodes);
-        console.log(shortestPathNodes);
-        setShortestPathCells(shortestPathNodes);
-        setVisitedCells(visitedNodes);
-        animateAlgorithm(visitedCells, shortestPathCells);
+        algs.forEach(alg => {
+          if (alg.symbol == selectedAlgorithm.symbol) {
+            [visitedNodes, shortestPathNodes] = alg.function(
+              bs,
+              startNode,
+              targetNode
+            );
+            console.log(visitedNodes);
+            console.log(shortestPathNodes);
+            setShortestPathCells(shortestPathNodes);
+            setVisitedCells(visitedNodes);
+            animateAlgorithm(visitedCells, shortestPathCells);
+          };
+        });
       };
       dijkstraAlgorithm();
       setAlgorithmIsExecuting(false);
@@ -60,8 +94,8 @@ const Board = () => {
   }, [algorithmIsExecuting]);
 
   useEffect(() => {
-    console.log("board state has changed");
-  }, [boardState]);
+    setBoardState(generateGrid(boardH, boardW, startCoords, targetCoords, wallNodes));
+  }, [startCoords, targetCoords]);
 
   const animateAlgorithm = (
     visitedNodes: Node[],
@@ -94,18 +128,17 @@ const Board = () => {
   };
 
   const handleNodeClick = (x: number, y: number) => {
+    const clickedNode: Node = boardState[y][x]
+    const newNode: Node = {
+      ...clickedNode,
+      weight: Infinity,
+      visited: false,
+    };
+    let newWallNodes = wallNodes.concat([newNode])
+    setWallNodeCoords(newWallNodes)
     setBoardState((prevGrid) => {
       const newGrid = prevGrid.map((row) => [...row]);
-      const clickedNode = newGrid[y][x];
-
-      // Check if the clicked node is not the start or target node
       if (!clickedNode.start && !clickedNode.target) {
-        // Update the weight to infinity to make it a wall node
-        const newNode = {
-          ...clickedNode,
-          weight: Infinity,
-          visited: false, // Ensure visited status is reset for walls
-        };
         newGrid[y][x] = newNode;
       }
 
