@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
-import { Node, node } from "../types";
+import { Coords, Node, node } from "../types";
 import { useAtom } from "jotai";
 import generateGrid from "../utils/generateBoard";
-import { BoardState, algorithmInExecution, selectedAlgorithmAtom } from "../atoms";
+import {
+  BoardState,
+  algorithmInExecution,
+  selectedAlgorithmAtom,
+} from "../atoms";
 import NodeEl from "./NodeEl";
-import { startNodeCoords, targetNodeCoords, wallNodeCoords, boardHeight, boardWidth } from "../atoms";
+import {
+  startNodeCoords,
+  targetNodeCoords,
+  wallNodeCoords,
+  boardHeight,
+  boardWidth,
+} from "../atoms";
 import { Dijkstra } from "../algorithms/Djikstra";
 import { AStar } from "../algorithms/Astar";
 import { GreedyBestFirstSearch } from "../algorithms/Greedy";
@@ -21,13 +31,13 @@ const Board = () => {
   const [boardW] = useAtom(boardWidth);
   const [boardH] = useAtom(boardHeight);
 
-  const [startNode] = useState<Node>({
+  const [startNode, setStartNode] = useState<Node>({
     ...node,
     x: startCoords.x,
     y: startCoords.y,
     start: true,
   });
-  const [targetNode] = useState<Node>({
+  const [targetNode, setTargetNode] = useState<Node>({
     ...node,
     x: targetCoords.x,
     y: targetCoords.y,
@@ -64,38 +74,40 @@ const Board = () => {
     {
       function: BreadthFirstSearch,
       symbol: "BFS",
-    }
+    },
   ];
+
+  useEffect(() => {
+    setStartNode({ ...startNode, x: startCoords.x, y: startCoords.y });
+    setTargetNode({ ...targetNode, x: targetCoords.x, y: targetCoords.y });
+    setBoardState(
+      generateGrid(boardH, boardW, startCoords, targetCoords, wallNodes)
+    );
+  }, [startCoords, targetCoords]);
+
   useEffect(() => {
     if (algorithmIsExecuting) {
       let bs = boardState;
       let visitedNodes: Node[] = [];
       let shortestPathNodes: Node[] = [];
-      console.log(bs[9][4]);
       const dijkstraAlgorithm = () => {
-        algs.forEach(alg => {
+        algs.forEach((alg) => {
           if (alg.symbol == selectedAlgorithm.symbol) {
             [visitedNodes, shortestPathNodes] = alg.function(
               bs,
               startNode,
               targetNode
             );
-            console.log(visitedNodes);
-            console.log(shortestPathNodes);
             setShortestPathCells(shortestPathNodes);
             setVisitedCells(visitedNodes);
             animateAlgorithm(visitedCells, shortestPathCells);
-          };
+          }
         });
       };
       dijkstraAlgorithm();
       setAlgorithmIsExecuting(false);
     }
   }, [algorithmIsExecuting]);
-
-  useEffect(() => {
-    setBoardState(generateGrid(boardH, boardW, startCoords, targetCoords, wallNodes));
-  }, [startCoords, targetCoords]);
 
   const animateAlgorithm = (
     visitedNodes: Node[],
@@ -128,22 +140,22 @@ const Board = () => {
   };
 
   const handleNodeClick = (x: number, y: number) => {
-    const clickedNode: Node = boardState[y][x]
+    const clickedNode: Node = boardState[y][x];
     const newNode: Node = {
       ...clickedNode,
       weight: Infinity,
       visited: false,
     };
-    let newWallNodes = wallNodes.concat([newNode])
-    setWallNodeCoords(newWallNodes)
-    setBoardState((prevGrid) => {
-      const newGrid = prevGrid.map((row) => [...row]);
-      if (!clickedNode.start && !clickedNode.target) {
+    if (!clickedNode.start && !clickedNode.target) {
+      let newWallNodes = wallNodes.concat([newNode]);
+      setWallNodeCoords(newWallNodes);
+      setBoardState((prevGrid) => {
+        const newGrid = prevGrid.map((row) => [...row]);
         newGrid[y][x] = newNode;
-      }
 
-      return newGrid;
-    });
+        return newGrid;
+      });
+    }
   };
 
   return (

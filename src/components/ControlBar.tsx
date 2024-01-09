@@ -19,15 +19,15 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure
-} from '@chakra-ui/react'
+  useDisclosure,
+} from "@chakra-ui/react";
 import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
 import generateGrid from "../utils/generateBoard";
 
 const ControlBar: React.FC = () => {
@@ -42,82 +42,73 @@ const ControlBar: React.FC = () => {
   const [wallNodes, setWallNodeCoords] = useAtom(wallNodeCoords);
   const [boardH] = useAtom(boardHeight);
   const [boardW] = useAtom(boardWidth);
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const algorithms = [
     {
       name: "Dijkstra",
       symbol: "Dijkstra",
-      description: `How does Dijkstra’s Algorithm work?
-      In a summarized way, the algorithm…
-      Starts at the node that we give as a parameter and it will return the shortest path between this node and all the other nodes (or vertexes) in the graph.
-      It calculates the shortest distance from each node to the source and saves this value if it finds a shorter path that the path that it had saved before. It calculates the distance between a node and the origin node, if this distance is less than it has been saved before, the new minimum distance will be the new distance.
-      Once Dijkstra’s algorithm has found the shortest path between the origin node and another node, it marks the node as visited (if it didn’t do it the algorithm could enter into an infinite loop).
-      Steps 2 and 3 are repeated until all the nodes are visited. This way, we have visited all the nodes and we’ve saved the shortest path possible to reach each node.`
+      description: `Starting Point: Choose a starting point in the maze.
+
+      Initialize Distances: Assign a distance of 0 to the starting point and infinity to all other points.\n
+      
+      Explore Neighbors: Look at all the points directly connected to the starting point (neighbors) and update their distances. The distance to a neighbor is the sum of the distance to the current point and the length of the path to that neighbor.\n
+      
+      Choose Shortest Path: Among the unexplored points, choose the one with the shortest distance. Move to that point and repeat the process.\n
+      
+      Repeat Until Goal: Keep repeating steps 3 and 4 until you reach your goal. At each step, update distances and choose the shortest path.\n
+      
+      Shortest Path Found: Once you reach your goal, you've found the shortest path from the starting point to the goal.`,
     },
     {
       name: "A Star",
       symbol: "Astar",
-      description: "A* desc"
+      description: `desc`,
     },
     {
       name: "Greedy Best First Search",
       symbol: "GBFS",
-      description: "GBFS desc"
+      description: "GBFS desc",
     },
 
     {
       name: "Bidirectional Swarm",
       symbol: "BS",
-      description: "BS desc"
+      description: "BS desc",
     },
     {
       name: "Depth First Search",
       symbol: "DFS",
-      description: "DFS desc"
+      description: "DFS desc",
     },
     {
       name: "Best First Search",
       symbol: "BFS",
       description: "BFS desc",
-    }
-  ]
+    },
+  ];
 
   const handleAlgorithmChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const symbol = event.target.value
-    algorithms.forEach(alg => {
+    const symbol = event.target.value;
+    algorithms.forEach((alg) => {
       if (alg.symbol == symbol) setSelectedAlgorithm(alg);
-    })
-
+    });
   };
 
-  const handleLearnMore = () => {
-
-  };
+  const handleLearnMore = () => {};
 
   const handleClearBoard = () => {
-    console.log(wallNodes)
-    setWallNodeCoords([]);
-    console.log(wallNodes)
-
-    let newState = generateGrid(
-      boardH,
-      boardW,
-      startingNodeCoords,
-      endNodeCoords,
-      []//fix wall coords here
-    );
-    setBoardState(newState);
+    window.location.reload();
   };
 
-  const onStartCoordsChange = (x = startingNodeCoords.x, y = startingNodeCoords.y) => {
+  const onStartCoordsChange = (x: number, y: number) => {
     setStartNodeCoords({ x, y });
-  }
+  };
 
   const onTargetCoordsChange = (x = endNodeCoords.x, y = endNodeCoords.y) => {
     setEndNodeCoords({ x, y });
-  }
+  };
 
   const handleStartVisualization = () => {
     setAlgorithmIsExecuting(true);
@@ -126,7 +117,10 @@ const ControlBar: React.FC = () => {
   return (
     <>
       <Flex p="4" bg="gray.200" align="center">
-        <Select value={selectedAlgorithm.symbol} onChange={handleAlgorithmChange}>
+        <Select
+          value={selectedAlgorithm.symbol}
+          onChange={handleAlgorithmChange}
+        >
           <option value="Astar">A Star</option>
           <option value="Dijkstra">Dijkstra</option>
           <option value="DFS">Depth First Search</option>
@@ -145,7 +139,7 @@ const ControlBar: React.FC = () => {
           onClick={() => handleClearBoard()}
           isLoading={algorithmIsExecuting}
         >
-          Clear Board
+          Reset Board
         </Button>
         <Button
           colorScheme="green"
@@ -160,12 +154,10 @@ const ControlBar: React.FC = () => {
           <ModalContent>
             <ModalHeader>{`${selectedAlgorithm.name} Algorithm`}</ModalHeader>
             <ModalCloseButton />
-            <ModalBody>
-              {selectedAlgorithm.description}
-            </ModalBody>
+            <ModalBody>{selectedAlgorithm.description}</ModalBody>
 
             <ModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={onClose}>
+              <Button colorScheme="blue" mr={3} onClick={onClose}>
                 Close
               </Button>
             </ModalFooter>
@@ -174,14 +166,32 @@ const ControlBar: React.FC = () => {
       </Flex>
       <Flex p="2" bg="gray.200">
         <Box bg="green">
-          <NumberInput size="sm" defaultValue={startingNodeCoords.x} maxW={20} min={0} max={boardW - 1} onChange={(x) => onStartCoordsChange(Number(x))}>
+          <NumberInput
+            size="sm"
+            defaultValue={startingNodeCoords.x}
+            maxW={20}
+            min={0}
+            max={boardW - 1}
+            onChange={(x) =>
+              onStartCoordsChange(Number(x), startingNodeCoords.y)
+            }
+          >
             <NumberInputField />
             <NumberInputStepper>
               <NumberIncrementStepper />
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <NumberInput size="sm" defaultValue={startingNodeCoords.y} maxW={20} min={0} max={boardH - 1} onChange={(y) => onStartCoordsChange(Number(y))}>
+          <NumberInput
+            size="sm"
+            defaultValue={startingNodeCoords.y}
+            maxW={20}
+            min={0}
+            max={boardH - 1}
+            onChange={(y) =>
+              onStartCoordsChange(startingNodeCoords.x, Number(y))
+            }
+          >
             <NumberInputField />
             <NumberInputStepper>
               <NumberIncrementStepper />
@@ -189,7 +199,37 @@ const ControlBar: React.FC = () => {
             </NumberInputStepper>
           </NumberInput>
         </Box>
-        <Box>Target Node:</Box>
+
+        <Box bg="red">
+          <NumberInput
+            size="sm"
+            defaultValue={endNodeCoords.x}
+            maxW={20}
+            min={0}
+            max={boardW - 1}
+            onChange={(x) => onTargetCoordsChange(Number(x), endNodeCoords.y)}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          <NumberInput
+            size="sm"
+            defaultValue={endNodeCoords.y}
+            maxW={20}
+            min={0}
+            max={boardH - 1}
+            onChange={(y) => onTargetCoordsChange(endNodeCoords.x, Number(y))}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+        </Box>
       </Flex>
     </>
   );
